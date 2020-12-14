@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Clicker</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Font Awesome 5? -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <!-- Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body ondragstart="return false">
+
+
+    <div id="the-container" class="container-fluid p-0 h-100">
+        <canvas id="c"></canvas>
+        <!-- Header Bar -->
+        <!-- <div class="row justify-content-center py-5">
+            <h1>
+                Job Generator
+            </h1>
+        </div> -->
+        <!-- Game Columns -->
+        <!-- <div class="container-fluid"> -->
+
+        <div id="100-height" class="row justify-content-center h-100">
+            <!-- Left Column -->
+            <div id="left-column" class="col-4 bg-trans no-stretch">
+                <div id="day-title" class="row justify-content-center align-content-center">
+                    <h1>MONDAY</h1>
+                </div>
+                <div id="day-progress" style="width: 100%" class="">Hi</div>
+                <div id="chat-box">
+                    <div id="chat" class="">
+                    </div>
+                    <!-- <div id="chat-blinker">
+                        > _
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Center Column -->
+            <div class="col-3 d-flex justify-content-center no-stretch">
+
+                <!-- <img id="obj-click" onclick="addClick()" src="images/logo.png" class="slow-spin"> -->
+                <div id="main-brain-master">
+                    <div id="main-brain-throbber">
+                        <!-- <div id="main-brain-snap"> -->
+                        <div id="main-brain-center" class="d-flex justify-content-center align-items-center">
+                            <img id="main-brain" onclick="addClick()" src="images/brainBlue.png" draggable="false">
+                        </div>
+                        <!-- </div> -->
+                    </div>
+                </div>
+
+
+
+                <div id="main-points" class=" d-flex flex-column align-items-center">
+                    <h2 id="main-knowledge"></h2>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div id="upgrade-column" class="col-5 bg-trans pr-0 no-stretch">
+                <div id="upgrade-title" class="row justify-content-center align-content-center">
+                    <h1>STORE</h1>
+                </div>
+                <div id="upgrade-list"></div>
+            </div>
+
+        </div>
+    </div>
+    <!-- </div> -->
+
+
+    </div>
+
+    <audio id="click-1" src="sounds/click1.mp3"></audio>
+    <audio id="click-2" src="sounds/click2.mp3"></audio>
+    <audio id="click-3" src="sounds/click3.mp3"></audio>
+    <audio id="click-4" src="sounds/click4.mp3"></audio>
+    <audio id="music-1" src="music/Africa.mp3"></audio>
+    <audio id="music-2" src="music/TakeOnMe.mp3"></audio>
+    <audio id="music-3" src="music/NeverGiveUUp.mp3"></audio>
+
+    <!-- <span id="draw-test"></span> -->
+
+    <!-- Stats -->
+    <script src="stats.js"></script>
+
+    <!-- Main -->
+    <script src="app.js"></script>
+
+    <!-- Chat -->
+    <script src="chat.js"></script>
+
+    <!-- Canvas -->
+    <script src="canvas.js"></script>
+
+    <!-- Music -->
+    <script src="music.js"></script>
+
+    <!-- #region jQuery, Popper.js, Bootstrap JS -->
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <!-- #endregion -->
+</body>
+
+</html>

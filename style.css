@@ -1,0 +1,410 @@
+/* #region ROOT */
+
+:root {
+    --prime: #3ba4db;
+    --prime-dark: #0e3347;
+    --dark: #333;
+    --logo-white: #fff;
+    --brain-max: 350px;
+    --brain-min: 250px;
+    --window-height: 0px;
+}
+
+@font-face {
+    font-family: PixelFont;
+    src: url("VPPixel-Simplified.otf") format("opentype");
+    /* font-weight: bold; */
+}
+
+/* .slow-spin {
+    -webkit-animation: fa-spin 6s infinite linear;
+    animation: fa-spin 6s infinite linear;
+} */
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    width: 99%;
+    font-family: PixelFont;
+    color: white;
+    user-select: none;
+}
+
+canvas {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#the-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.bg-trans {
+    background-color: rgb(1, 1, 1, .6);
+}
+
+.pos-relative {
+    position: relative;
+}
+
+.no-stretch {
+    height: var(--window-height) !important;
+    /* height: 200px; */
+    align-items: flex-start;
+}
+
+/* #endregion ROOT */
+
+/* #region LEFT */
+
+#left-column {
+    padding-right: 0
+}
+
+#day-title {
+    color: white;
+    height: 150px;
+}
+
+#day-progress {
+    background-color: white;
+    height: 25px;
+    color: black;
+    text-align: right;
+    padding-right: 10px;
+    overflow: hidden;
+}
+
+#chat-box {
+    height: calc(var(--window-height) - 175px);
+    /* background-color: purple */
+}
+
+#chat {
+    position: absolute;
+    bottom: 10px;
+    /* left: 20; */
+    padding-left: 10px;
+    overflow: hidden;
+    max-height: calc(var(--window-height) - 175px);
+    width: calc(100% - 20px);
+}
+
+#chat-welcome {
+    transition: opacity 2s
+}
+
+.chat-welcome-hide {
+    opacity: 0 !important;
+}
+
+/* #chat-blinker {
+    position: absolute;
+    padding-left: 10px;
+    height: 20px;
+    bottom: 5px;
+} */
+
+.chat-line {
+    display: flex;
+    align-content: center;
+    margin-top: 5px;
+    opacity: 1;
+    font-size: 90%;
+}
+
+.chat-image {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    margin-right: 5px;
+}
+
+.chat-arrow {
+    margin-right: 5px;
+}
+
+/* #endregion LEFT */
+
+/* #region MAIN */
+
+@keyframes throb {
+    0% {
+        height: var(--brain-min);
+        width: var(--brain-min);
+        margin-top: calc(var(--brain-min) / -2);
+        margin-left: calc(var(--brain-min) / -2);
+    }
+    50% {
+        height: var(--brain-max);
+        width: var(--brain-max);
+        margin-top: calc(var(--brain-max) / -2);
+        margin-left: calc(var(--brain-max) / -2);
+    }
+    100% {
+        height: var(--brain-min);
+        width: var(--brain-min);
+        margin-top: calc(var(--brain-min) / -2);
+        margin-left: calc(var(--brain-min) / -2);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: rotate(0deg)
+    }
+    20% {
+        transform: rotate(10deg)
+    }
+    40% {
+        transform: rotate(-10deg)
+    }
+    60% {
+        transform: rotate(5deg)
+    }
+    80% {
+        transform: rotate(-5deg)
+    }
+    100% {
+        transform: rotate(0deg)
+    }
+}
+
+@keyframes snap {
+    0% {
+        transform: rotate(0deg)
+    }
+    20% {
+        transform: rotate(10deg)
+    }
+    100% {
+        transform: rotate(0deg)
+    }
+}
+
+/* .snap {
+    animation: snap .5s linear 0s 1 normal !important
+} */
+
+.point-floaters {
+    position: fixed;
+}
+
+#main-points {
+    position: absolute;
+    top: 70%;
+}
+
+#main-brain-master {
+    z-index: 2;
+    cursor: pointer;
+    /* transition: transform 2s; */
+}
+
+#main-brain-throbber {
+    animation: throb 5s ease-in-out 0s infinite normal;
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    margin-top: -150px;
+    margin-left: -150px;
+}
+
+#main-brain-center {
+    width: 100%;
+    height: 100%
+}
+
+#main-brain {
+    width: 100%;
+    height: 100%;
+    transition: width .1s, height .1s
+}
+
+#main-brain.shrink {
+    width: 90%;
+    height: 90%;
+}
+
+#main-brain:hover {
+    animation: shake 1s linear 0s 1 normal
+}
+
+#obj-click {
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    margin-top: -150px;
+    /* Negative half of height. */
+    margin-left: -150px;
+    /* Negative half of width. */
+    z-index: 2;
+}
+
+#obj-click-glow {
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-top: -150px;
+    /* Negative half of height. */
+    margin-left: -150px;
+    /* Negative half of width. */
+    z-index: 1;
+}
+
+/* #endregion MAIN */
+
+/* #region UPGRADES */
+
+#row-upgrade {
+    background-color: var(--dark);
+    color: white
+}
+
+#upgrade-title {
+    /* background: transparent url('images/backgrounds/darkblue1.jpg') no-repeat center center /cover; */
+    color: white;
+    height: 150px;
+}
+
+#upgrade-column {
+    /* background: transparent url('images/backgrounds/lightning2.png') no-repeat center center /cover; */
+    /* border-left: 5px outset var(--prime); */
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+#upgrade-list {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /* padding-left: 20px; */
+    /* scrollbar-width: none; */
+    padding-left: 15px;
+    /* width: 100% */
+    height: calc(var(--window-height) - 150px);
+}
+
+/* 
+::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    background: transparent;
+} */
+
+.unavailable {
+    color: #aaa;
+}
+
+.available {
+    color: white;
+}
+
+.vis {
+    background-color: rgb(1, 1, 1, 0);
+}
+
+.vis-dark {
+    background-color: rgb(1, 1, 1, 0.5)
+}
+
+.locked {
+    /* display: none; */
+    height: 0 !important;
+    overflow: hidden;
+}
+
+.maxed-out {
+    height: 0 !important;
+    overflow: hidden;
+    margin: 0 !important;
+}
+
+.upgrade-card {
+    font-family: PixelFont;
+    position: relative;
+    /* border-top: 5px outset var(--prime); */
+    /* border-bottom: 5px outset var(--prime); */
+    margin-right: 0;
+    height: 100px;
+    /* color: white; */
+    /* background-color: rgb(1, 1, 1, 0.5); */
+    /* background: transparent url('images/backgrounds/darkblue2.jpg') no-repeat center center /cover; */
+    transition: height 1.5s, color 1s, margin 2s;
+    overflow: hidden;
+}
+
+.upgrade-owned {
+    position: absolute;
+    right: 20px
+}
+
+.upgrade-description {
+    /* display: none; */
+    position: absolute;
+    left: 200%;
+    transition: left 2s, height 2s;
+    width: 100%;
+    /* overflow-x: hidden; */
+    /* overflow-y: hidden; */
+    /* height: 0%; */
+}
+
+.upgrade-card:hover {
+    cursor: pointer;
+    height: 200px;
+}
+
+.upgrade-card:hover .upgrade-description {
+    /* display: inline; */
+    left: 0%;
+    width: 100%;
+    /* height: 100%; */
+}
+
+.upgrade-image-div {
+    position: relative;
+    height: 100%;
+}
+
+.upgrade-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background-color: rgb(1, 1, 1, .5); */
+    z-index: 3;
+    transition: background-color 1s;
+}
+
+.upgrade-image {
+    /* width: 100px; */
+    height: 100%;
+    /* position: absolute; */
+    /* left: 0; */
+    /* top: 0; */
+}
+
+.upgrade-brain-box {
+    width: 30px;
+}
+
+.upgrade-brain {
+    width: 30px;
+    height: 30px;
+}
+
+/* #endregion UPGRADES */
