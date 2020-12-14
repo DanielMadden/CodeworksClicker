@@ -7,7 +7,8 @@ c.height = window.innerHeight;
 c.width = window.innerWidth;
 
 //chinese characters - taken from the unicode charset
-var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+// var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+var matrix = "0123456789@#$%^&*()*&^%+-/~{[|`]}";
 //converting the string into an array of single characters
 matrix = matrix.split("");
 
@@ -24,7 +25,7 @@ for (var x = 0; x < columns; x++)
 function draw() {
     //Black BG for the canvas
     //translucent BG to show trail
-    ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.045)";
     ctx.fillRect(0, 0, c.width, c.height);
 
     ctx.fillStyle = "#3ba4db";//blue text

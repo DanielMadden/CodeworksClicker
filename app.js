@@ -25,6 +25,10 @@
 
 // #region VARIABLES
 
+let begCodeworks = findUpgradeIndex("Fully Stacked")
+let endCodeworks = findUpgradeIndex("The Dungeon Master")
+console.log(`Codeworks upgrades start at index ${begCodeworks} and end at ${endCodeworks}`)
+
 let click1 = document.getElementById("click-1")
 let click2 = document.getElementById("click-2")
 let click3 = document.getElementById("click-3")
@@ -44,15 +48,24 @@ function findUpgrade(upgradeName) {
     return upgrades.find(i => i.name == upgradeName)
 }
 
+function findUpgradeIndex(upgradeName) {
+    return upgrades.findIndex(i => i.name == upgradeName)
+}
 // #endregion Search Function
 
 // #region BUY FUNCTIONS
 
-function buyUpgrade(upgrade) {
-    let upgradeObj = findUpgrade(upgrade)
+function buyUpgrade(upgradeName) {
+    let upgradeIndex = findUpgradeIndex(upgradeName)
+    let upgradeObj = stats.upgrades[upgradeIndex]
     let purchase = true;
     if (upgradeObj.max) {
         if (upgradeObj.owned >= upgradeObj.max) {
+            purchase = false
+        }
+    }
+    if (upgradeObj.maxLevel) {
+        if (upgradeObj.owned >= upgradeObj.maxLevel) {
             purchase = false
         }
     }
@@ -60,11 +73,25 @@ function buyUpgrade(upgrade) {
         stats.knowledge -= upgradeObj.price
         upgradeObj.owned++
         upgradeObj.price = Math.floor(upgradeObj.price * 1.5)
+        if (upgradeObj.priceMod) {
+            upgradeObj.price = Math.floor(upgradeObj.price * upgradeObj.priceMod)
+        }
+        if (upgradeObj.name == "Stonks") {
+            stats.bonusMax = 10 + upgradeObj.owned * upgradeObj.mod
+            stats.bonusChance = 1 + upgradeObj.owned * upgradeObj.chanceMod
+        }
+        if (upgradeObj.name == "Mental Ascension") {
+            if (upgradeObj.owned < upgradeObj.maxLevel) {
+                stats.timeInterval = 1000 - (upgradeObj.mod * upgradeObj.owned)
+                timeInterval = stats.timeInterval
+            }
+        }
         addToChat("buy", "", upgradeObj)
         // @ts-ignore
         click2.play()
     }
     update()
+    // updateStats(upgradeObj)
     updatePrice(upgradeObj)
     updateOwned(upgradeObj)
     updateLocked(upgradeObj)
@@ -74,7 +101,6 @@ function buyUpgrade(upgrade) {
 // #endregion BUY FUNCTIONS
 
 // #region Interval Management
-let autoIntervalTime = 1000
 function addAuto() {
     let overallBonus = 0;
 
@@ -91,10 +117,9 @@ function addAuto() {
     }
     updateBonus(overallBonus)
     update()
-}
-
-function refreshAutoInterval() {
-    setTimeout(addAuto, autoIntervalTime)
+    if (!firstClick) {
+        save()
+    }
 }
 
 
@@ -107,26 +132,33 @@ function refreshAutoInterval() {
 // #endregion
 
 let firstClick = true;
+let bonusPoints = 0;
 function addClick() {
     stats.totalClicks++
     stats.knowledge += 1 + findUpgrade("Absorption").owned;
     // @ts-ignore
     // click1.play()
 
-    if (firstClick == true) {
+    if (firstClick) {
         firstClick = false
         document.getElementById("chat-welcome").classList.add("chat-welcome-hide")
         setTimeout(removeChatWelcome, 3000)
         setTimeout(randomlyChat, 3000)
-        setInterval(updateTime, 1000)
-
+        setTimeout(updateTime, timeInterval)
         playMusic()
+        if (stats.firstTime) {
+            stats.firstTime = false
+            save()
+        }
     }
 
-    if (Math.random() * 100 <= 1) {
-        let bonus = 1 + Math.floor(Math.random() * (stats.bonusMax))
+    if (Math.random() * 100 <= stats.bonusChance) {
+        // console.log(stats.bonusChance)
+        let bonus = findUpgrade("Absorption").owned + 1 + Math.floor(Math.random() * (stats.bonusMax))
         stats.knowledge += bonus
-        brainChat(bonus)
+        bonusPoints = bonus
+        // console.log(bonusPoints)
+        // brainChat(bonus)
         // @ts-ignore
         click1.play()
     }
@@ -134,6 +166,7 @@ function addClick() {
     if (shrinkingBrain == false) {
         shrinkBrain()
     }
+
     update()
 }
 
@@ -157,31 +190,73 @@ function update() {
     updateAvailability()
 }
 
-/* Stretch Goal: Point Floaters
-let pointFloaters = 0
-function mousePoints(event) {
 
-    let newPoint = document.createElement("span")
+let pointFloaters = 0
+function generatePoints(X, Y, type, setAmount) {
+    let x = X + 0;
+    let y = Y - 40;
+    let amount;
+    if (type == "click") {
+        amount = 1 + findUpgrade("Absorption").owned
+    } else if (type == "auto") {
+        amount = setAmount
+    }
+
+    let newPoint = document.createElement("h3")
     newPoint.classList.add("point-floaters")
     newPoint.id = `point-floater-${pointFloaters}`
-    newPoint.innerHTML = `+ ${1 + findUpgrade("Absorption").owned}`
+    newPoint.innerHTML = `+ ${amount}`
+    pointFloaters++
     document.body.appendChild(newPoint)
-
-
-    let x = event.clientX + 20;
-    let y = event.clientY - 5;
-    $(".point-floaters").css({
+    // console.log(newPoint.id)
+    $(`#${newPoint.id}`).css({
         left: x,
         top: y,
         opacity: 1
     });
-    let coords = "X coords: " + x + ", Y coords: " + y;
 
-    console.log($(`#pointer-floater-0`).css("left"))
+    if (bonusPoints) {
+        let bonusPoint = document.createElement("h1")
+        bonusPoint.classList.add("point-floaters")
+        bonusPoint.classList.add("point-floaters-bonus")
+        bonusPoint.classList.add("bg-trans")
+        bonusPoint.id = `point-floater-${pointFloaters}`
+        bonusPoint.innerHTML = `+ ${bonusPoints}`
+        pointFloaters++
+        bonusPoints = 0
+        document.body.appendChild(bonusPoint)
+        $(`#${bonusPoint.id}`).css({
+            left: x,
+            top: y,
+            opacity: 2,
+            "z-index": 4
+        });
+    }
 
-    pointFloaters++
+    // console.log($(`#pointer-floater-0`).css("left"))
 }
-*/
+
+function updateFloaters() {
+    let floaters = document.getElementsByClassName("point-floaters")
+    for (let i = 0; i < floaters.length; i++) {
+        let floater = floaters[i]
+        let floaterStyle = floaters[i].style
+        let x = parseInt(floaterStyle.left)
+        floaterStyle.left = `${x - (Math.random() > 0.4 ? (Math.random() * -30) : (Math.random() * 30))}px`
+
+        let y = parseInt(floaterStyle.top)
+        floaterStyle.top = `${floaters[i].classList.contains("point-floaters-bonus") ? y - 15 : y - 30}px`
+
+        let opacity = floaterStyle.opacity
+        floaterStyle.opacity = opacity - 0.1
+        if (floaterStyle.opacity <= 0) {
+            floaters[i].remove()
+        }
+    }
+}
+
+setInterval(updateFloaters, 100)
+
 // Update Upgrade Availability
 function updateAvailability() {
     // Update ""available" purchases
@@ -195,6 +270,12 @@ function updateAvailability() {
             for (let j = 0; j < elements.length; j++) {
                 elements[j].classList.remove("vis-dark")
                 elements[j].classList.add("vis")
+            }
+
+            if (!upgrades[i].discovered) {
+                upgrades[i].discovered = true
+                document.getElementById(`${upgrades[i].name}-name`).innerText = `${upgrades[i].name}`
+                document.getElementById(`${upgrades[i].name}-description`).innerHTML = `${upgrades[i].description}`
             }
         } else {
             document.getElementById(`${upgrades[i].name}-row`).classList.remove("unavailable")
@@ -210,6 +291,14 @@ function updateAvailability() {
     }
 }
 
+// So... apparently I haven't been pushing my upgradeObj to the stats THIS ENTIRE TIME
+// Update Upgrades
+function updateStats(upgradeObj) {
+    let index = findUpgradeIndex(upgradeObj.name)
+    console.log(index)
+    stats.upgrades[index] = upgradeObj
+}
+
 // Update Price
 function updatePrice(upgradeObj) {
     document.getElementById(`${upgradeObj.name}-cost`).innerText = `${upgradeObj.price}`
@@ -218,7 +307,7 @@ function updatePrice(upgradeObj) {
 // Update Owned
 function updateOwned(upgradeObj) {
     if (upgradeObj.owned) {
-        document.getElementById(`${upgradeObj.name}-owned`).innerText = `Level ${upgradeObj.owned}`
+        document.getElementById(`${upgradeObj.name}-owned`).innerText = `Level ${upgradeObj.maxLevel ? upgradeObj.owned >= upgradeObj.maxLevel ? "Max" : upgradeObj.owned : upgradeObj.owned}`
     }
 }
 
@@ -227,13 +316,17 @@ function updateMax(upgradeObj) {
         document.getElementById(`${upgradeObj.name}-row`).classList.add("maxed-out");
         document.getElementById(`${upgradeObj.name}-owned`).innerText = ``
     }
+    if (upgradeObj.owned >= upgradeObj.maxLevel) {
+        document.getElementById(`${upgradeObj.name}-row`).classList.add("maxed-level-out");
+    }
 }
 
 function updateLocked(upgradeObj) {
     if (upgradeObj.name == "Fully Stacked" && upgradeObj.owned) {
         for (let i = 0; i < upgrades.length; i++) {
             if (upgrades[i].subType) {
-                if (upgrades[i].subType == "staff") {
+                if (upgrades[i].subType == "staff" || upgrades[i].subType == "codeworks") {
+                    stats.upgrades[i].locked = false
                     document.getElementById(`${upgrades[i].name}-row`).classList.remove("locked");
                 }
             }
@@ -243,6 +336,10 @@ function updateLocked(upgradeObj) {
 
 function updateBonus(bonus) {
     document.getElementById("day-progress").innerText = `+ ${bonus}`
+    let progBar = document.getElementById("day-progress").getBoundingClientRect()
+    if (bonus) {
+        generatePoints((progBar.x + progBar.width), progBar.y, "auto", bonus)
+    }
 }
 
 // Draw Day
@@ -255,13 +352,13 @@ function updateDay() {
 
 // Draw Time
 const maxTime = 12
-let time = maxTime
+let timeInterval = stats.timeInterval
 function updateTime() {
-    time--
-    document.getElementById("day-progress").style.width = `${100 / maxTime * time}%`
+    stats.time--
+    document.getElementById("day-progress").style.width = `${100 / maxTime * stats.time}%`
 
-    if (time == 0) {
-        time = maxTime
+    if (stats.time == 0) {
+        stats.time = maxTime
         document.getElementById("day-progress").style.width = `100%`
 
         // Set Day
@@ -275,6 +372,11 @@ function updateTime() {
     }
 
     addAuto()
+    refreshTimeInterval()
+}
+
+function refreshTimeInterval() {
+    setTimeout(updateTime, timeInterval)
 }
 
 // Draw Upgrades
@@ -284,21 +386,21 @@ function drawUpgrades() {
 
     for (let i = 0; i < upgrades.length; i++) {
         template += `
-        <div  id="${upgrades[i].name}-row" class="row upgrade-card mb-5 unavailable bg-trans ${upgrades[i].locked ? "locked" : ""}" onclick="buyUpgrade('${upgrades[i].name}')" >
+        <div id="${upgrades[i].name}-row" class="row upgrade-card mb-5 unavailable bg-trans ${upgrades[i].locked ? "locked" : ""} ${upgrades[i].owned == upgrades[i].max ? "d-none" : ""} ${upgrades[i].discovered ? "" : "undiscovered"} ${upgrades[i].owned >= upgrades[i].maxLevel ? "maxed-level-out" : ""}" onclick="buyUpgrade('${upgrades[i].name}')" >
             <div class="upgrade-image-div" >
                 <div class="upgrade-overlay ${upgrades[i].name}-overlay" ></div>
                 <img class="upgrade-image" src="${upgrades[i].image}" alt="">
             </div>
             <div class="col ml-3 p-0">
-                <h4 class="upgrade-owned" id="${upgrades[i].name}-owned" >${upgrades[i].owned ? upgrades[i].owned : ""}</h4>
-                <h2>${upgrades[i].name}</h2>
+                <h4 class="upgrade-owned" id="${upgrades[i].name}-owned" >${upgrades[i].owned ? "Level " + (upgrades[i].owned >= upgrades[i].maxLevel ? "Max" : upgrades[i].owned) : ""}</h4>
+                <h2 id="${upgrades[i].name}-name" >${upgrades[i].discovered ? upgrades[i].name : "???"}</h2>
                     <div class="pos-relative upgrade-brain-box d-inline-block" >
                         <div class="upgrade-overlay ${upgrades[i].name}-overlay" ></div><img class="upgrade-brain" src="images/brainBlue.png">
                     </div>
                     <span>
                         <span id="${upgrades[i].name}-cost" class="upgrade-cost">${upgrades[i].price}</span>
                     </span><br/>
-                    <span class="upgrade-description" >${upgrades[i].description}</span>
+                    <span class="upgrade-description" id="${upgrades[i].name}-description" >${upgrades[i].discovered ? upgrades[i].description : "<br/><br/>???"}</span>
             </div>
         </div>`
     }
@@ -323,8 +425,9 @@ function fixColumns() {
 }
 // #endregion
 
+document.getElementById("day-progress").style.width = `${100 / maxTime * stats.time}%`
 drawUpgrades()
 update()
 updateDay()
-addAuto()
+// addAuto()
 fixColumns()

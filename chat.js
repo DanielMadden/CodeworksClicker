@@ -10,22 +10,24 @@ let quotes = {
         "Such brain, much wow!",
     ],
     randomQuotes: [
-        "Thoughts. All I have are thoughts.",
+        "Thoughts? All I have are thoughts...",
         "This game is so extra.",
         "I heard codeworks could help me become a developer...",
-        "If only there was a course I could take to help me learn faster..."
+        "If only there was a course I could take to help me learn faster...",
+        "Some day I'll be a developer...",
+        "<i>You search online for courses. Boise Codeworks seems to be a popular choice.</i>",
+        "Can I really do this?..."
     ],
     codeworksQuotes: [
-        "You can't wait to learn something new today.",
-        "You're a little confused on this subject. Maybe ask a TA?",
+        "<i>You can't wait to learn something new today.</i>",
+        "<i>You're a little confused on this subject. Maybe ask a TA?</i>",
         "Everybody here is so nice!",
-        "You've formed strong bonds with your comrades.",
-        "You feel like you're part of the codeworks family.",
+        "<i>You've formed strong bonds with your classmates.</i>",
+        "<i>You feel like you're part of the codeworks family.</i>",
         "Be sure to follow Brittany's gameplan if you want to get hired.",
         "Scrum is one of the most efficient and adaptable planning systems to date.",
         "Zach has an intimidating voice, but I think he's a big softie.",
         "Tim's Taco Tuesday should have had ACTUAL tacos...",
-        "Lost on a topic? Google it."
     ]
 }
 let lastQuote = ""
@@ -40,10 +42,14 @@ function addToChat(type, quote, targetObj) {
         let chatOpacity = parseFloat(chatLines[i].style.opacity)
         chatLines[i].style.opacity = `${chatOpacity - 0.08}`
         chatOpacity = parseFloat(chatLines[i].style.opacity)
+
         if (chatOpacity <= 0) {
             chatLines[i].remove()
         }
+
     }
+
+
 
     // Remove chat-line max's
     if (document.getElementById(`${maxChatLines}-chat-line`)) {
@@ -66,24 +72,37 @@ function addToChat(type, quote, targetObj) {
     } else if (type == "staff") {
         newChatLine.innerHTML = `<img class="chat-image" src="${targetObj.image}" >${quote}`
     } else if (type == "brain") {
-        newChatLine.innerHTML = `<img class="chat-image" src="images/brainBlue.png" >${quote}`
+        newChatLine.innerHTML = `<span class="chat-line-brain" style="opacity: 0.9" ><img class="chat-image" src="images/brainBlue.png" >${quote}</span>`
     } else if (type == "welcome") {
         newChatLine.innerHTML = `<span id="chat-welcome" >${quote}</span>`
     }
 
 }
 
+function fadeBrains() {
+    let brainLines = document.getElementsByClassName("chat-line-brain")
+    for (let i = 0; i < brainLines.length; i++) {
+        let brainOpacity = parseFloat(brainLines[i].style.opacity)
+        brainLines[i].style.opacity = `${brainOpacity - 0.05}`
+        brainOpacity = parseFloat(brainLines[i].style.opacity)
+        if (brainOpacity <= 0) {
+            brainLines[i].remove()
+        }
+    }
+}
+
+setInterval(fadeBrains, 100)
 
 function randomlyChat() {
     let quoteChoice = "";
     let quoteShuffle = Math.random() * 100
     let quoteType = "";
     let staffObj = {}
-    if (stats.upgrades[2].owned == 0) {
+    if (stats.upgrades[begCodeworks].owned == 0) {
         quoteShuffle = 100
     }
-    if (quoteShuffle > 50) {
-        if (stats.upgrades[2].owned == 1) {
+    if (quoteShuffle > 60) {
+        if (stats.upgrades[begCodeworks].owned == 1) {
             let ID = Math.floor(Math.random() * quotes.codeworksQuotes.length)
             quoteChoice = quotes.codeworksQuotes[ID]
             quoteType = "thought"
@@ -93,7 +112,7 @@ function randomlyChat() {
             quoteType = "thought"
         }
     } else {
-        let staffID = 3 + Math.floor(Math.random() * (stats.upgrades.length - 3))
+        let staffID = begCodeworks + 1 + Math.floor(Math.random() * (endCodeworks - begCodeworks))
         console.log(staffID)
         let ID = Math.floor(Math.random() * stats.upgrades[staffID].quotes.length)
         quoteChoice = stats.upgrades[staffID].quotes[ID]
@@ -131,13 +150,21 @@ function playChatSound(quoteType) {
 }
 
 function setRandomChatTime() {
-    randomChatTime = Math.floor(Math.random() * 10000) + 5000
+    randomChatTime = Math.floor(Math.random() * 10 * timeInterval) + 5000
     console.log("Next random chat in " + randomChatTime + "ms")
     setTimeout(randomlyChat, randomChatTime)
 }
 
-addToChat("welcome", "<h4>Your quest to become the ultimate developer has begun! Click on the brain to start obtaining knowledge!</h4>")
+function welcomeMessage() {
+    if (stats.firstTime) {
+        addToChat("welcome", "<h4>Your quest to become the ultimate developer has begun! Click on the brain to start obtaining knowledge!</h4>")
+    } else {
+        addToChat("welcome", "<h4>Welcome back! Click on the brain to start.</h4>")
+    }
+}
+
 
 function removeChatWelcome() {
     document.getElementById("chat-welcome").remove()
 }
+welcomeMessage()
